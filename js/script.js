@@ -8,6 +8,7 @@ $(function() {
   ctx.lineCap = 'round';
 
   socket.on('color-load', function(color) {
+    console.log(color);
     var origX, origY;
     ctx.strokeStyle = color;
     $('#main-canvas').on('mousedown', function(e) {
@@ -19,7 +20,7 @@ $(function() {
     }).on('mousemove', function(e) {
       if(painting) {
 	ctx.lineTo(e.offsetX, e.offsetY);
-	ctx.stroke(),
+	ctx.stroke();
 	socket.emit('draw', {
 	  color: color,
 	  x1: origX,
@@ -33,10 +34,12 @@ $(function() {
     }).on('mouseup', turnPaintingOff)
     .on('mouseleave', turnPaintingOff);
   }).on('other-draw', function(data) {
+    var origColor = ctx.strokeStyle;
     ctx.strokeStyle = data.color;
     ctx.beginPath();
     ctx.moveTo(data.x1, data.y1);
     ctx.lineTo(data.x2, data.y2);
     ctx.stroke();
+    ctx.strokeStyle = origColor;
   });
 });
