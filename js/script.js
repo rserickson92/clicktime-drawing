@@ -23,6 +23,7 @@ $(function() {
 	ctx.stroke();
 	socket.emit('draw', {
 	  color: color,
+	  img: canvas.toDataURL(),
 	  x1: origX,
 	  y1: origY,
 	  x2: e.offsetX,
@@ -41,5 +42,12 @@ $(function() {
     ctx.lineTo(data.x2, data.y2);
     ctx.stroke();
     ctx.strokeStyle = origColor;
+  }).on('drawing-load', function(imgUrl) {
+    ctx.beginPath();
+    var img = new Image;
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0);
+    };
+    img.src = imgUrl;
   });
 });

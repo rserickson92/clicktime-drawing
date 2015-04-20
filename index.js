@@ -10,12 +10,17 @@ app.get('/', function(req, res){
   res.sendFile('index.html', {root: __dirname});
 });
 
+var canvasImage;
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.emit('color-load', selectColor());
   socket.on('draw', function(data) {
+    canvasImage = data.img;
     socket.broadcast.emit('other-draw', data);
   });
+  if(canvasImage) {
+    socket.emit('drawing-load', canvasImage);
+  }
 });
 
 var loadColors = function() {
