@@ -36,9 +36,12 @@ var loadColors = function() {
   var data = JSON.parse(fs.readFileSync('colors.json', 'utf-8'));
   return data.colors;
 }
-colors = loadColors();
+var colors = loadColors(),
+i = 0;
 selectColor = function() {
-  return colors.length > 0 ? colors.shift() : 'black';
+  var color = colors[i];
+  i = (i + 1) % colors.length;
+  return color;
 };
 
 //reset canvas every minute
