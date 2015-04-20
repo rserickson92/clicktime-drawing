@@ -13,6 +13,9 @@ app.get('/', function(req, res){
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.emit('color-load', selectColor());
+  socket.on('draw', function(data) {
+    socket.broadcast.emit('other-draw', data);
+  });
 });
 
 var loadColors = function() {
