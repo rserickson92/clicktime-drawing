@@ -41,6 +41,12 @@ selectColor = function() {
   return colors.length > 0 ? colors.shift() : 'black';
 };
 
+//reset canvas every minute
+setInterval(function() {
+  canvasImageURL = null;
+  io.emit('clear-canvas');
+}, 60 * 1000);
+
 //start server
 var port = process.env.PORT || 3000;
 http.listen(port, function(){

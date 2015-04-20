@@ -64,5 +64,7 @@ $(function() {
       ctx.drawImage(img, 0, 0);
     };
     img.src = imgUrl;
+  }).on('clear-canvas', function() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   });
 });
