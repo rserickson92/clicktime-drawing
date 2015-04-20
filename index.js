@@ -1,39 +1,49 @@
+//load node libraries
 var express = require('express'),
-  fs = require('fs'),
-  app = express(),
-  http = require('http').Server(app),
-  io = require('socket.io')(http);
+fs = require('fs'),
+app = express(),
+http = require('http').Server(app),
+io = require('socket.io')(http);
+
+//configure css/js folders
 app.use('/css', express.static(__dirname + '/css'));
 app.use('/js', express.static(__dirname + '/js'));
 
+//load index.html
 app.get('/', function(req, res){
   res.sendFile('index.html', {root: __dirname});
 });
 
-var canvasImage;
+/* when a user connects:
+ * -assign them a color
+ * -load pre-existing drawings
+ * -add event handler for when a user draws
+ */
+var canvasImageURL;
 io.on('connection', function(socket){
-  console.log('a user connected');
   socket.emit('color-load', selectColor());
   socket.on('draw', function(data) {
-    canvasImage = data.img;
+    canvasImageURL = data.img;
     socket.broadcast.emit('other-draw', data);
   });
-  if(canvasImage) {
-    socket.emit('drawing-load', canvasImage);
+  if(canvasImageURL) {
+    socket.emit('drawing-load', canvasImageURL);
   }
 });
 
+//logic for loading/selecting colors
 var loadColors = function() {
   var data = JSON.parse(fs.readFileSync('colors.json', 'utf-8'));
   return data.colors;
 }
-
 colors = loadColors();
 selectColor = function() {
   return colors.length > 0 ? colors.shift() : 'black';
 };
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+//start server
+var port = process.env.PORT || 3000;
+http.listen(port, function(){
+  console.log('listening on *:' + port);
 });
 
