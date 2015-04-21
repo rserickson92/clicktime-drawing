@@ -22,12 +22,12 @@ $(function() {
       painting = true;
       origX = e.offsetX;
       origY = e.offsetY;
-      ctx.beginPath();
-      ctx.moveTo(origX, origY);
 
     //when user moves mouse, draw
     }).on('mousemove', function(e) {
       if(painting) {
+	ctx.beginPath();
+	ctx.moveTo(origX, origY);
 	ctx.lineTo(e.offsetX, e.offsetY);
 	ctx.stroke();
 	socket.emit('draw', {
@@ -64,6 +64,7 @@ $(function() {
       ctx.drawImage(img, 0, 0);
     };
     img.src = imgUrl;
+
   }).on('clear-canvas', function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   });
