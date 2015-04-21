@@ -8,6 +8,16 @@ $(function() {
   ctx.lineWidth = 3;
   ctx.lineCap = 'round';
 
+  /* Function to get position of clicks in canvas.
+   * Necessary because Firefox doesn't have e.offsetX and e.offsetY.
+   */
+  var getOffset = function(e, axis) {
+    var rect = e.target.getBoundingClientRect(),
+    offsetX = e.clientX - rect.left,
+    offsetY = e.clientY - rect.top;
+    return axis === 'x' ? offsetX : offsetY;
+  };
+
   /* when user connects (is assigned a color):
    * -register drawing event handlers
    * -register event handler for when other users draw
@@ -20,26 +30,26 @@ $(function() {
     //when user clicks, begin drawing
     $('#main-canvas').on('mousedown', function(e) {
       painting = true;
-      origX = e.offsetX;
-      origY = e.offsetY;
+      origX = getOffset(e, 'x');
+      origY = getOffset(e, 'y');
 
     //when user moves mouse, draw
     }).on('mousemove', function(e) {
       if(painting) {
 	ctx.beginPath();
 	ctx.moveTo(origX, origY);
-	ctx.lineTo(e.offsetX, e.offsetY);
+	ctx.lineTo(getOffset(e, 'x'), getOffset(e, 'y'));
 	ctx.stroke();
 	socket.emit('draw', {
 	  color: color,
 	  img: canvas.toDataURL(),
 	  x1: origX,
 	  y1: origY,
-	  x2: e.offsetX,
-	  y2: e.offsetY
+	  x2: getOffset(e, 'x'),
+	  y2: getOffset(e, 'y')
 	});
-	origX = e.offsetX;
-	origY = e.offsetY;
+	origX = getOffset(e, 'x');
+	origY = getOffset(e, 'y');
       }
 
     //when user lets go of mouse or leaves bounds, stop drawing
